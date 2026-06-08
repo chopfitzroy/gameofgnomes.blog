@@ -1,0 +1,100 @@
+[settings]
+  site_dir = "site"
+  build_dir = "build"
+
+  default_template_file = "templates/main.html"
+  default_content_selector = "main"
+
+  doctype = "<!DOCTYPE html>"
+  clean_urls = true
+
+  page_file_extensions = ["html", "htm", "md"]
+  markdown_extensions   = ["md"]
+
+  plugin_discovery = true
+  plugin_dirs = ["plugins"]
+
+[custom_options]
+  # Used by the atom plugin to build absolute feed URLs.
+  site_url = "https://gameofgnomes.blog"
+
+# Use the first <h1> of each page as the <title>
+[widgets.page-title]
+  widget = "title"
+  selector = "h1"
+  default = "Game of Gnomes"
+
+# Insert a <p><time class="note-date" datetime="...">...</time></p> block
+# directly after the first `# ` heading of each note, so the date renders
+# visually right under the page title. Runs on the raw markdown source,
+# before parsing. Source lives in hooks/pre-parse.lua.
+#
+# Scoped with path_regex so it runs on every note (any .md under site/)
+# except the home page (site/index.md).
+[hooks.pre-parse]
+  path_regex = '\.md$'
+  exclude_page = "index.md"
+  file = "hooks/pre-parse.lua"
+
+# Build an index of every page except the home page.
+[index]
+  # Skip the home page itself -- it's where the index view is rendered,
+  # not a note.
+  exclude_page = "index.md"
+
+  sort_by = "date"
+  sort_type = "calendar"
+  sort_descending = true
+
+  # Parse ISO dates like 2026-04-26 (%F == %Y-%m-%d).
+  date_formats = ["%F"]
+
+  # Required for the atom plugin.
+  dump_json = "index.json"
+
+[index.fields.title]
+  selector = ["h1"]
+  required = true
+
+[index.fields.date]
+  selector = ["time.note-date"]
+  extract_attribute = "datetime"
+  fallback_to_content = true
+
+# Pretty date for display on the index page. Sourced from the element's
+# inner text, which the pre-parse hook set to "Apr 26, 2026".
+[index.fields.date_pretty]
+  selector = ["time.note-date"]
+
+# Lightweight excerpt for the atom feed. First <p> of each note.
+[index.fields.excerpt]
+  selector = ["p"]
+
+# Render the index into #index on site/index.md.
+[index.views.index]
+  index_selector = "#index"
+  index_template = """
+  <ul class="index">
+  {% for e in entries %}
+    <li class="index-item">
+      <a class="index-link" href="{{ e.url }}">{{ e.title }}</a>
+      {% if e.date %}
+        <time class="index-date" datetime="{{ e.date }}">{{ e.date_pretty }}</time>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+  """
+
+# Atom feed (plugins/atom.lua, vendored from soupault-website, MIT).
+[widgets.atom]
+  widget = "atom"
+  page = "index.md"          # Attach to the home page so it runs once.
+
+  feed_file = "atom.xml"
+  feed_author = "Otis Sutton"
+  feed_author_email = "chopfitzroy@gmail.com"
+  feed_title = "Game of Gnomes"
+  feed_subtitle = "A blog about playing tabletop roleplaying games"
+  feed_logo = ""
+  delete_elements = ["a"]    # Strip links from excerpts.

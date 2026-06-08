@@ -1,0 +1,9 @@
+#!/bin/sh
+# Prints the ISO date (YYYY-MM-DD) of the last git commit touching $PAGE_FILE.
+# Falls back to today's date if the file is untracked (first build before commit).
+set -eu
+d=$(git log -n 1 --pretty=format:%cs -- "$PAGE_FILE" 2>/dev/null || true)
+if [ -z "$d" ]; then
+  d=$(date +%Y-%m-%d)
+fi
+printf '%s' "$d"

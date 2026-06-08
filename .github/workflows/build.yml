@@ -1,0 +1,51 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Required so scripts/git-last-modified can see full history.
+          fetch-depth: 0
+
+      - name: Install soupault
+        run: |
+          set -eux
+          SOUPAULT_VERSION="5.3.0"
+          curl -fsSL -o soupault.tar.gz \
+            "https://github.com/PataphysicalSociety/soupault/releases/download/${SOUPAULT_VERSION}/soupault-${SOUPAULT_VERSION}-linux-x86_64.tar.gz"
+          tar xzf soupault.tar.gz
+          sudo mv "soupault-${SOUPAULT_VERSION}-linux-x86_64/soupault" /usr/local/bin/
+          soupault --version
+
+      - name: Build
+        run: soupault
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
