@@ -86,6 +86,14 @@
   </ul>
   """
 
+# Inject a GoatCounter tracking pixel into every page. The `p` value is
+# derived from the source .md file name (see plugins/goatcounter.lua):
+#   site/session-prep.md -> ?p=/session-prep
+#   site/index.md        -> ?p=/
+[widgets.goatcounter]
+  widget = "goatcounter"
+  endpoint = "https://otis.goatcounter.com/count"
+
 # Atom feed (plugins/atom.lua, vendored from soupault-website, MIT).
 [widgets.atom]
   widget = "atom"
