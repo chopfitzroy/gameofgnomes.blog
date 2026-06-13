@@ -1,7 +1,7 @@
-# Session Prep
+== Session Prep
 
 TODO...
 
-### The three P's
+==== The three P's
 
 People, places, pressure
