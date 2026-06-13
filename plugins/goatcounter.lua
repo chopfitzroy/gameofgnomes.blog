@@ -1,9 +1,9 @@
 -- GoatCounter tracking pixel.
 --
 -- Injects an <img> counter pixel into every page, using the page's path
--- (derived from its source .md file name) as the `p` query parameter, e.g.
---   site/session-prep.md  ->  <img src=".../count?p=/session-prep">
---   site/index.md         ->  <img src=".../count?p=/">
+-- (derived from its source .adoc file name) as the `p` query parameter, e.g.
+--   site/session-prep.adoc  ->  <img src=".../count?p=/session-prep">
+--   site/index.adoc         ->  <img src=".../count?p=/index">
 --
 -- Config (soupault.toml):
 --   endpoint = "https://otis.goatcounter.com/count"  (required)
@@ -15,11 +15,11 @@ if not endpoint then
 end
 
 -- Path of the source file relative to the site directory, e.g.
--- "site/notes/session-prep.md" -> "notes/session-prep.md".
+-- "site/notes/session-prep.adoc" -> "notes/session-prep.adoc".
 local site_dir = soupault_config["settings"]["site_dir"]
 local rel = Regex.replace_all(page_file, "^" .. site_dir .. "/", "")
 
--- Drop the file extension: "notes/session-prep.md" -> "notes/session-prep".
+-- Drop the file extension: "notes/session-prep.adoc" -> "notes/session-prep".
 local slug = Regex.replace(rel, "\\.[^.]+$", "")
 
 local path = "/" .. slug

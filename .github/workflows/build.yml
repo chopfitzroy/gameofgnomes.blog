@@ -33,6 +33,16 @@ jobs:
           sudo mv "soupault-${SOUPAULT_VERSION}-linux-x86_64/soupault" /usr/local/bin/
           soupault --version
 
+      - name: Install pandoc
+        run: |
+          set -eux
+          PANDOC_VERSION="3.10"
+          curl -fsSL -o pandoc.tar.gz \
+            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
+          tar xzf pandoc.tar.gz
+          sudo mv "pandoc-${PANDOC_VERSION}/bin/pandoc" /usr/local/bin/
+          pandoc --version
+
       - name: Build
         run: soupault
 

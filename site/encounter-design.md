@@ -1,7 +1,0 @@
-# Encounter Design
-
-TODO...
-
-### The three D's
-
-Damage, defend, divide

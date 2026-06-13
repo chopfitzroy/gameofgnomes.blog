@@ -8,11 +8,18 @@
   doctype = "<!DOCTYPE html>"
   clean_urls = true
 
-  page_file_extensions = ["html", "htm", "md"]
-  markdown_extensions   = ["md"]
+  page_file_extensions = ["html", "htm", "adoc"]
 
   plugin_discovery = true
   plugin_dirs = ["plugins"]
+
+# Compile AsciiDoc source files to HTML with Pandoc before soupault parses
+# them (replaces the previous built-in Markdown rendering). Soupault appends
+# the page file path to this command and reads the resulting HTML from stdout.
+# Pandoc renders the AsciiDoc document's first `==` section title as the
+# page's <h1>, with `===`/`====` becoming <h2>/<h3>.
+[preprocessors]
+  adoc = "pandoc -f asciidoc -t html5"
 
 [custom_options]
   # Used by the atom plugin to build absolute feed URLs.
@@ -25,22 +32,22 @@
   default = "Game of Gnomes"
 
 # Insert a <p><time class="note-date" datetime="...">...</time></p> block
-# directly after the first `# ` heading of each note, so the date renders
-# visually right under the page title. Runs on the raw markdown source,
-# before parsing. Source lives in hooks/pre-parse.lua.
+# directly after the first `<h1>` of each note, so the date renders
+# visually right under the page title. Runs on the preprocessed HTML
+# (Pandoc output), before parsing. Source lives in hooks/pre-parse.lua.
 #
-# Scoped with path_regex so it runs on every note (any .md under site/)
-# except the home page (site/index.md).
+# Scoped with path_regex so it runs on every note (any .adoc under site/)
+# except the home page (site/index.adoc).
 [hooks.pre-parse]
-  path_regex = '\.md$'
-  exclude_page = "index.md"
+  path_regex = '\.adoc$'
+  exclude_page = "index.adoc"
   file = "hooks/pre-parse.lua"
 
 # Build an index of every page except the home page.
 [index]
   # Skip the home page itself -- it's where the index view is rendered,
   # not a note.
-  exclude_page = "index.md"
+  exclude_page = "index.adoc"
 
   sort_by = "date"
   sort_type = "calendar"
@@ -97,7 +104,7 @@
 # Atom feed (plugins/atom.lua, vendored from soupault-website, MIT).
 [widgets.atom]
   widget = "atom"
-  page = "index.md"          # Attach to the home page so it runs once.
+  page = "index.adoc"        # Attach to the home page so it runs once.
 
   feed_file = "atom.xml"
   feed_author = "Otis Sutton"
