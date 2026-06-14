@@ -1,7 +1,43 @@
 == Session Prep
 
-TODO...
+When preparing for a session I tend to (loosely) follow https://slyflourish.com/eight_steps_2023.html[The Eight Steps of the Lazy DM], these provide a nice structure and help to minimize the likelihood of me missing something important.
 
-==== The three P's
+That being said I have my own process for when I am thinking about the story hooks I want to present to the players during any given session. I don't mean some pre-determined plot but more a list of potential interactions that may take place in the world based on whichever direction the players decide to proceed.
 
-People, places, pressure
+It is also worth noting it's impossible to account for every scenario but if you know the characters are on their way to a small hamlet and are likely to reach their destination this session it pays to have a few things going on that the characters may or may not engage with.
+
+=== The three P's
+
+I've distilled this process down to something I call "The three P's" which stands for people, places, and pressure. Now you could argue this falls under "Outline Important NPCs" or "Develop Fantastic Locations" from the eight steps and you'd be right there is definitely some cross over but the way we are thinking about people and places in this context is slightly different.
+
+The three p's are all about creating meaningful encounters, encounters that feel anchored in the world as opposed to tacked on. Meaningful encounters consist of three core pillars, the location the encounter takes place, who is present at the encounter, and whatever external force is driving the encounter. Take the following example:
+
+The player characters are stuck in a city under siege, surrounded by baying howls of frenzied Gnolls. The cities stores are rapidly depleting, there is at most three more days before food will start running out. A local baroness tracks down the characters after hearing of their heroic deeds, after cornering them in a seedy inn at the edge of the city she implores them to come to the cities aid in exchange for the deed to a keep she has recently aquired.
+
+Now using the three p's we can break this down to:
+
+* People: The baroness and the player characters
+* Places: The seedy inn at the cities edge, the sound of baying Gnolls nearby
+* Pressure: Three days until food starts to run out
+
+Now you might be thinking that scenario feels a little _canned_ or _railroad-esque_ and as it's written it definitely feels that way, but much in the spirit of the eight steps you can actually tease these three things apart to be their own lists and mix and match as you see fit.
+
+Let's make some quick tables to highlight this approach in more detail:
+
+[cols="1,2,2,2"]
+|===
+|Result (d4)
+|People
+|Places
+|Pressure
+
+|1
+|Lady Carmichael
+|Silverthorn Keep
+|Hiding someone hunted
+
+|2
+|Bert Tushok
+|The Ram's head
+|Being shaken down
+|===  
