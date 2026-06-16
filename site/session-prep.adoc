@@ -12,19 +12,19 @@ I've distilled this process down to something I call "The three P's" which stand
 
 The three p's are all about creating meaningful encounters, encounters that feel anchored in the world as opposed to tacked on. Meaningful encounters consist of three core pillars, the location the encounter takes place, who is present at the encounter, and whatever external force is driving the encounter. Take the following example:
 
-The player characters are stuck in a city under siege, surrounded by baying howls of frenzied Gnolls. The cities stores are rapidly depleting, there is at most three more days before food will start running out. A local baroness tracks down the characters after hearing of their heroic deeds, after cornering them in a seedy inn at the edge of the city she implores them to come to the cities aid in exchange for the deed to a keep she has recently aquired.
+The player characters are stuck in a city under siege surrounded by the baying howls of frenzied Gnolls. The cities stores are rapidly depleting, there is at most three more days before food will start running out. A local baroness tracks down the characters after hearing of their heroic deeds. Cornering them in a seedy inn at the edge of the city she implores them to come to the cities aid in exchange for the deed to a keep she has recently aquired.
 
 Now using the three p's we can break this down to:
 
-* People: The baroness and the player characters
+* People: The baroness
 * Places: The seedy inn at the cities edge, the sound of baying Gnolls nearby
 * Pressure: Three days until food starts to run out
 
 Now you might be thinking that scenario feels a little _canned_ or _railroad-esque_ and as it's written it definitely feels that way, but much in the spirit of the eight steps you can actually tease these three things apart to be their own lists and mix and match as you see fit.
 
-Let's make some quick tables to highlight this approach in more detail:
+Let's make a list of a few examples of the _Three P's_ I've deliberately formatted this list as a table which I will explain shortly:
 
-[cols="1,2,2,2"]
+[cols="1,2,2,4"]
 |===
 |Result (d4)
 |People
@@ -34,10 +34,31 @@ Let's make some quick tables to highlight this approach in more detail:
 |1
 |Lady Carmichael
 |Silverthorn Keep
-|Hiding someone hunted
+|Looking to to buy safe passage out of the city for Gnoll maid before guards do their next inspection
 
 |2
 |Bert Tushok
 |The Ram's head
-|Being shaken down
+|Would like to purchase personal protection for the next three hours
+
+|3
+|Tink Lightfinger
+|Hedgerow Antiquities
+|Needs help getting an incoming shipment passed the surrounding Gnoll warband tonight
+
+|4
+|Narkan Rockeye
+|City Barracks
+|Wants a captured solider rescued from a Gnoll camp before he is executed tomorrow at dawn
 |===  
+
+Now you could look at this list as four individual NPC's at their own locations with their own time sensitive problems _or_ you could look at this list as a table of isolated NPC's, locations, and time sensitive problems which can be rolled on to create a number of interesting scenarios let's say we roll 2,4,1 now we have to figure out why Bert Tushok the local bar keep is at the City Barracks looking to buy safe passage out of the city for his Gnoll maid?
+
+These kind of story hooks are fun to explore and naturally lead to emergent gameplay. You also don't have to use all three columns let's say the character's elect to go to the City Barracks of their own volution and you roll a random encounter check and just so happen to trigger a random encounter you can just roll on the people and pressures columns let's say a 1 and 3 and now Lady Carmichael is also at the City Barracks trying to persuade a young guard to help her get an iconming shipment passed the surrounding Gnoll warband.
+
+Now in reality I'm not creating a unique table for every session I run instead when I start a campaing I tend to create 3 tables:
+
+- Factions (d12)
+- Locations (d6,d6)
+- Pressures (d20)
+
