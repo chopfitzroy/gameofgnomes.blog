@@ -1,0 +1,23 @@
+== Encounter Dice
+
+1-2. Misfortune
+3-4. Setback
+5-10. Nothing
+11. Oppurtunity
+12. Windfall
+
+
+[cols="1,1,1"]
+|===
+|
+|Passive
+|Active
+
+|**Negative**
+|Setback
+|Misfortune
+
+|**Postive**
+|Oppurtunity
+|Windfall
+|===
