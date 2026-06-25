@@ -32,9 +32,11 @@ if not h1 then
 end
 local title = String.trim(HTML.inner_text(h1))
 
+-- Deliberately leave alt empty
+-- https://webmasters.stackexchange.com/a/106041
 local pixel = format(
-  '<img src="%s?p=%s&t=%s" alt="%s" referrerpolicy="no-referrer-when-downgrade">',
-  endpoint, path, title, title
+  '<img src="%s?p=%s&t=%s" alt="" referrerpolicy="no-referrer-when-downgrade">',
+  endpoint, path, title
 )
 
 -- Append the pixel to the end of <body> so it is part of the final markup.
