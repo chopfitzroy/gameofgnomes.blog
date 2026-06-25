@@ -24,9 +24,17 @@ local slug = Regex.replace(rel, "\\.[^.]+$", "")
 
 local path = "/" .. slug
 
+-- Use the page's first <h1> as the title (this mirrors the `title` widget
+-- in soupault.toml). Every page is expected to have an <h1>.
+local h1 = HTML.select_one(page, "h1")
+if not h1 then
+  Plugin.fail("goatcounter widget expected an <h1> on " .. page_file .. " but found none")
+end
+local title = String.trim(HTML.inner_text(h1))
+
 local pixel = format(
-  '<img src="%s?p=%s" alt="" referrerpolicy="no-referrer-when-downgrade">',
-  endpoint, path
+  '<img src="%s?p=%s&t=%s" alt="%s" referrerpolicy="no-referrer-when-downgrade">',
+  endpoint, path, title, title
 )
 
 -- Append the pixel to the end of <body> so it is part of the final markup.
