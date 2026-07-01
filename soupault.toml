@@ -101,6 +101,14 @@
   widget = "goatcounter"
   endpoint = "https://otis.goatcounter.com/count"
 
+# Append a "View source" link to the bottom of every note, pointing at the
+# post's source .adoc on GitHub (plugins/source-link.lua). Skips the home
+# page since it isn't a note.
+[widgets.source-link]
+  widget = "source-link"
+  path_regex = '\.adoc$'
+  exclude_page = "index.adoc"
+
 # Atom feed (plugins/atom.lua, vendored from soupault-website, MIT).
 [widgets.atom]
   widget = "atom"
