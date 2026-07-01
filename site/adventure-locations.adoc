@@ -1,0 +1,54 @@
+== Adventure locations
+
+I'd like to talk about a technique I use when preparing adventure locations. An adventure location can be anything from a small town to a impenetrable forest in the Feywild.
+
+There are many components to creating a good adventure location but in the interest of time and effeciency I've found the below three pillars or "three P's" offer the most bang for your buck when prepping.
+
+=== Three P's
+
+The _three P's_ stands for people, places, and pressure, meaningful encounters consist of; the location the encounter takes place, who is present at the encounter, and whatever external force is driving the encounter.
+
+An adventure location should have multiple people, places and pressure and it's up to you whether you want to pre-determine each encounter ahead of time or procedurally generate the encounters during the session, I myself like to do as little prep as possible and experience the same kind of surprise as everyone else at the table so I typically roll encounters at the table.
+
+Take the following example
+
+_The player characters are stuck in a city under siege surrounded by the baying howls of frenzied Gnolls. The cities stores are rapidly depleting, there is at most three more days before food will start running out. A local baroness tracks down the characters after hearing of their heroic deeds. Cornering them in a seedy inn at the edge of the city she implores them to come to the cities aid in exchange for the deed to a keep she has recently aquired._
+
+Now using the three p's we can break this down to:
+
+* People: The baroness
+* Places: The seedy inn at the cities edge, the sound of baying Gnolls nearby
+* Pressure: Three days until food starts to run out
+
+If your interested in how we got to this result below is an example of the table I might prepare for my adventure location, in this case _Greystone Keep_.
+
+[cols="1,2,2,4"]
+|===
+|Result (d4)
+|People
+|Places
+|Pressure
+
+|1
+|Lady Carmichael
+|Silverthorn Keep
+|Looking to to buy safe passage out of the city for Gnoll maid before guards do their next inspection
+
+|2
+|Bert Tushok
+|The Ram's head
+|Would like to purchase personal protection for the next three hours
+
+|3
+|Tink Lightfinger
+|Hedgerow Antiquities
+|Needs help getting an incoming shipment passed the surrounding Gnoll warband tonight
+
+|4
+|Narkan Rockeye
+|City Barracks
+|Wants a captured solider rescued from a Gnoll camp before he is executed tomorrow at dawn
+|===  
+
+These kind of story hooks are fun to explore and naturally lead to emergent gameplay. You also don't have to use all three columns let's say the character's elect to go to the City Barracks of their own volution and you roll a random encounter check and just so happen to trigger a random encounter you can just roll on the people and pressures columns let's say a 1 and 3 and now Lady Carmichael is also at the City Barracks trying to persuade a young guard to help her get an iconming shipment passed the surrounding Gnoll warband.
+
