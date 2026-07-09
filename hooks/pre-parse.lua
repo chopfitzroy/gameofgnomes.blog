@@ -17,11 +17,11 @@ local time_tag = format(
   iso, pretty
 )
 
-if not Regex.match(page_source, "</h1>") then
+if not Regex.match(page_source, "<h1") then
   Plugin.fail(
     "Note " .. page_file .. " has no top-level heading. " ..
     "Every note must start with a `# Title` line."
   )
 end
 
-page_source = Regex.replace(page_source, "</h1>", "</h1>\n" .. time_tag)
+page_source = Regex.replace(page_source, "<h1", time_tag .. "\n<h1")
