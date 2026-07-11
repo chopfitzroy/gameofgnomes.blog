@@ -93,6 +93,12 @@
   </ul>
   """
 
+# Inject OpenGraph/Twitter share-image meta tags into every page's <head>,
+# pointing at the per-post cards generated into build/og/ by
+# scripts/build-share-images.sh (source: plugins/og-image.lua).
+[widgets.og-image]
+  widget = "og-image"
+
 # Inject a GoatCounter tracking pixel into every page. The `p` value is
 # derived from the source .md file name (see plugins/goatcounter.lua):
 #   site/session-prep.md -> ?p=/session-prep

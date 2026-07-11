@@ -1,0 +1,19 @@
+[package]
+name = "share-images"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "share-images"
+path = "src/main.rs"
+
+[dependencies]
+# Pin to the published crate. Variable-font axis selection (wght/opsz via
+# font-weight) and native WOFF2 decoding are the reasons we use takumi here.
+takumi = { version = "2.0.2", features = ["from-html"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+opt-level = 3

@@ -43,8 +43,26 @@ jobs:
           sudo mv "pandoc-${PANDOC_VERSION}/bin/pandoc" /usr/local/bin/
           pandoc --version
 
+      # Rust toolchain for the share-image generator (scripts/share-images).
+      # takumi's MSRV is 1.91; pin a recent stable.
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # Cache the cargo registry and the tool's target dir so the takumi
+      # dependency tree is only compiled from scratch on the first run (or when
+      # scripts/share-images/Cargo.lock changes).
+      - name: Cache cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: scripts/share-images
+
       - name: Build
         run: soupault
+
+      # Generate per-post share images into build/og/. Must run after soupault
+      # (consumes index.json, writes into build/).
+      - name: Generate share images
+        run: scripts/build-share-images.sh
 
       - uses: actions/upload-pages-artifact@v3
         with:
