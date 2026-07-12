@@ -9,9 +9,10 @@
 -- "session-prep"), matching the paths emitted by plugins/og-image.lua.
 --
 -- The home page is excluded from the site index (it *is* the index view), so
--- it isn't in `site_index`. It's handled separately below: its card is built
--- from its own <h1> read out of the generated index.html, using the same
--- title-driven logic as posts.
+-- it isn't in `site_index`. Its card is rendered separately below using a
+-- hardcoded title. This is deliberate: the page's own <h1> stays "All Posts"
+-- (best for SEO / search result previews), while the share card can show a
+-- more marketing-friendly line -- see HOME_CARD_TITLE.
 --
 -- Every page must have a title; a missing or empty title is a hard error
 -- rather than a silent fallback.
@@ -19,6 +20,10 @@
 -- Note: soupault embeds lua-ml (a Lua ~2.5 dialect). Functions are global
 -- `function name()` statements, arrays are walked with `size()` + `while`,
 -- and nil is the only falsy value.
+
+-- Title shown on the home page's share/OG card. Intentionally independent of
+-- the page's <h1> ("All Posts").
+HOME_CARD_TITLE = "A blog about game mastering"
 
 og_dir = Sys.join_path(build_dir, "og")
 Sys.mkdir(og_dir)
@@ -61,23 +66,9 @@ while (n <= total) do
   n = n + 1
 end
 
--- Home page card. Read its <h1> from the generated index.html and render an
--- index.png (matching the /og/index.png path emitted by plugins/og-image.lua).
-index_html = Sys.read_file(Sys.join_path(build_dir, "index.html"))
-if not index_html then
-  Plugin.fail("post-build: could not read the generated index.html")
-end
-
-index_h1 = HTML.select_one(HTML.parse(index_html), "h1")
-index_title = ""
-if index_h1 then
-  index_title = String.trim(HTML.inner_text(index_h1))
-end
-if index_title == "" then
-  Plugin.fail("post-build: home page has no title; every page must have one")
-end
-
-render_card(index_title, Sys.join_path(og_dir, "index.png"))
+-- Home page card. Uses a hardcoded title (see above) and renders index.png,
+-- matching the /og/index.png path emitted by plugins/og-image.lua.
+render_card(HOME_CARD_TITLE, Sys.join_path(og_dir, "index.png"))
 count = count + 1
 
 Log.info("post-build: generated " .. count .. " share image(s) into " .. og_dir)

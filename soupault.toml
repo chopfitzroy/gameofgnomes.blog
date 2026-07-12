@@ -130,6 +130,6 @@
   feed_author = "Otis Sutton"
   feed_author_email = "chopfitzroy@gmail.com"
   feed_title = "Game of Gnomes"
-  feed_subtitle = "A blog about playing tabletop roleplaying games"
+  feed_subtitle = "A blog about game mastering"
   feed_logo = ""
   delete_elements = ["a"]    # Strip links from excerpts.
