@@ -1,18 +1,36 @@
--- OpenGraph / Twitter share-image meta tags.
+-- OpenGraph / Twitter share-image meta tags + share card rendering.
 --
--- Injects Open Graph and Twitter Card <meta> tags into every page's <head>,
--- pointing at the per-post share card generated into build/og/<slug>.png by
--- scripts/build-share-images.sh.
+-- Runs on every page. Does two things:
+--   1. Renders a 1200x630 share card into build/og/<slug>.png using
+--      ImageMagick (via scripts/share-image.sh).
+--   2. Injects Open Graph and Twitter Card <meta> tags into the page's
+--      <head>, pointing at that card.
 --
 -- The slug is derived from the source .adoc file name, matching both the
 -- clean URL soupault emits and the file name the share-image tool writes:
 --   site/session-prep.adoc  ->  <site_url>/og/session-prep.png
 --
--- The home page (index.adoc) has no per-post card, so it falls back to a
--- site-wide default at <site_url>/og/default.png.
+-- Deriving the slug and title here (rather than re-looping the site index in
+-- a post-build hook) keeps a single source of truth for both. Because this is
+-- a per-page widget, cards are only re-rendered when their page is
+-- (re)processed; run soupault with --force for a full rebuild.
 --
 -- Config (soupault.toml):
 --   (none) -- reads site_url from [custom_options].
+
+-- Single-quote a string for safe use in a POSIX shell command.
+function shq(s)
+  return "'" .. Regex.replace_all(s, "'", "'\\''") .. "'"
+end
+
+-- Render one card. Both arguments are shell-quoted so titles with spaces or
+-- punctuation reach ImageMagick intact.
+function render_card(title, out_path)
+  local cmd = "scripts/share-image.sh " .. shq(title) .. " " .. shq(out_path)
+  if not Sys.run_program(cmd) then
+    Log.error("og-image: failed to render share image for " .. out_path)
+  end
+end
 
 local site_url = soupault_config["custom_options"]["site_url"]
 if not site_url then
@@ -25,13 +43,9 @@ local site_dir = soupault_config["settings"]["site_dir"]
 local rel = Regex.replace_all(page_file, "^" .. site_dir .. "/", "")
 local slug = Regex.replace(rel, "\\.[^.]+$", "")
 
--- The home page gets a site-wide default card; posts get their own.
-local image_slug = slug
-if slug == "index" then
-  image_slug = "default"
-end
-
-local image_url = site_url .. "/og/" .. image_slug .. ".png"
+-- Every page's card is named after its slug, including the home page
+-- (index.adoc -> /og/index.png).
+local image_url = site_url .. "/og/" .. slug .. ".png"
 
 -- Title: the page's first <h1>, mirroring the `title` widget. Fall back to
 -- the site name for safety.
@@ -57,6 +71,11 @@ else
     end
   end
 end
+
+-- Render the share card into build/og/<slug>.png. Sys.mkdir is idempotent.
+local og_dir = Sys.join_path(build_dir, "og")
+Sys.mkdir(og_dir)
+render_card(title, Sys.join_path(og_dir, slug .. ".png"))
 
 -- Canonical page URL. Clean URLs mean the home page is the site root and every
 -- other page is "<site_url>/<slug>/".
