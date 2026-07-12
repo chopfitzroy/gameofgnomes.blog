@@ -43,12 +43,6 @@
   exclude_page = "index.adoc"
   file = "hooks/pre-parse.lua"
 
-# After the build, render per-post share/OG images into build/og/ using
-# ImageMagick (via scripts/share-image.sh). Runs once at the end with the
-# full site index available. Source lives in hooks/post-build.lua.
-[hooks.post-build]
-  file = "hooks/post-build.lua"
-
 # Build an index of every page except the home page.
 [index]
   # Skip the home page itself -- it's where the index view is rendered,
@@ -99,9 +93,9 @@
   </ul>
   """
 
-# Inject OpenGraph/Twitter share-image meta tags into every page's <head>,
-# pointing at the per-post cards generated into build/og/ by the post-build
-# hook (source: plugins/og-image.lua).
+# Render per-post share/OG images into build/og/ (via ImageMagick) and inject
+# the matching OpenGraph/Twitter meta tags into every page's <head>. Runs
+# per page so slug/title are derived once (source: plugins/og-image.lua).
 [widgets.og-image]
   widget = "og-image"
 
