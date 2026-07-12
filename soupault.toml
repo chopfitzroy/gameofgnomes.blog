@@ -93,6 +93,12 @@
   </ul>
   """
 
+# Render per-post share/OG images into build/og/ (via ImageMagick) and inject
+# the matching OpenGraph/Twitter meta tags into every page's <head>. Runs
+# per page so slug/title are derived once (source: plugins/og-image.lua).
+[widgets.og-image]
+  widget = "og-image"
+
 # Inject a GoatCounter tracking pixel into every page. The `p` value is
 # derived from the source .md file name (see plugins/goatcounter.lua):
 #   site/session-prep.md -> ?p=/session-prep
@@ -118,6 +124,6 @@
   feed_author = "Otis Sutton"
   feed_author_email = "chopfitzroy@gmail.com"
   feed_title = "Game of Gnomes"
-  feed_subtitle = "A blog about playing tabletop roleplaying games"
+  feed_subtitle = "A blog about game mastering"
   feed_logo = ""
   delete_elements = ["a"]    # Strip links from excerpts.
