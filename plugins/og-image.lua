@@ -2,14 +2,14 @@
 --
 -- Injects Open Graph and Twitter Card <meta> tags into every page's <head>,
 -- pointing at the per-post share card generated into build/og/<slug>.png by
--- scripts/build-share-images.sh.
+-- the post-build hook (hooks/post-build.lua).
 --
 -- The slug is derived from the source .adoc file name, matching both the
 -- clean URL soupault emits and the file name the share-image tool writes:
 --   site/session-prep.adoc  ->  <site_url>/og/session-prep.png
 --
--- The home page (index.adoc) has no per-post card, so it falls back to a
--- site-wide default at <site_url>/og/default.png.
+-- The home page (index.adoc) is excluded from the site index, so the
+-- post-build hook renders its card separately as <site_url>/og/index.png.
 --
 -- Config (soupault.toml):
 --   (none) -- reads site_url from [custom_options].
@@ -25,13 +25,9 @@ local site_dir = soupault_config["settings"]["site_dir"]
 local rel = Regex.replace_all(page_file, "^" .. site_dir .. "/", "")
 local slug = Regex.replace(rel, "\\.[^.]+$", "")
 
--- The home page gets a site-wide default card; posts get their own.
-local image_slug = slug
-if slug == "index" then
-  image_slug = "default"
-end
-
-local image_url = site_url .. "/og/" .. image_slug .. ".png"
+-- Every page's card is named after its slug, including the home page
+-- (index.adoc -> /og/index.png), rendered by the post-build hook.
+local image_url = site_url .. "/og/" .. slug .. ".png"
 
 -- Title: the page's first <h1>, mirroring the `title` widget. Fall back to
 -- the site name for safety.
