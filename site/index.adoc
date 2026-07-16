@@ -1,5 +1,7 @@
 == All Posts
 
+A collection of all posts ordered by most recently edited.
+
 ++++
 <div id="index" class="index-container"></div>
 ++++
