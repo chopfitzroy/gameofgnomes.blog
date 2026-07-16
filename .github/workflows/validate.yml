@@ -81,6 +81,7 @@ jobs:
         run: soupault
 
       - name: Validate changed pages
+        id: validate
         if: steps.pages.outputs.urls != ''
         run: |
           set -euo pipefail
@@ -91,6 +92,15 @@ jobs:
           # smolweb-validate exits non-zero only for genuine errors (invalid
           # HTML or a failing CSS grade); warnings are reported but do not fail
           # the run. That's the behaviour we want here.
+          #
+          # We stream each result to the Actions log AND accumulate a markdown
+          # report that a later step posts as a PR comment. We deliberately do
+          # NOT exit non-zero here: the comment must be posted first (see the
+          # "Enforce validation result" step), so we only record the outcome.
+          # Per-page details accumulate in $body; the header/summary are
+          # prepended afterwards once we know the overall outcome.
+          body="$(mktemp)"
+
           failed=0
           while IFS= read -r url; do
             [ -n "$url" ] || continue
@@ -99,20 +109,85 @@ jobs:
             if [ ! -f "$file" ]; then
               echo "❌ ${url} -> ${file} not found in build output"
               failed=1
+              {
+                echo "### ❌ \`${url}\`"
+                echo
+                echo "Expected build output \`${file}\` was not found."
+                echo
+              } >> "$body"
               continue
             fi
             abs="$(realpath "$file")"
             echo "::group::Validating ${url}"
             # Run from the validator dir so its relative classpath resolves,
             # while still validating the site file by absolute path.
-            if ( cd /tmp/smolweb-validator \
-                   && ./smolweb-validate "file://${abs}" --verbose ); then
+            status=0
+            output="$(
+              cd /tmp/smolweb-validator \
+                && ./smolweb-validate "file://${abs}" --verbose
+            )" || status=$?
+            echo "$output"
+            echo "::endgroup::"
+
+            if [ "$status" -eq 0 ]; then
               echo "✅ ${url} passed"
+              icon="✅"
             else
               echo "❌ ${url} failed validation"
+              icon="❌"
               failed=1
             fi
-            echo "::endgroup::"
+
+            {
+              echo "<details><summary>${icon} <code>${url}</code></summary>"
+              echo
+              echo '```'
+              echo "$output"
+              echo '```'
+              echo
+              echo "</details>"
+              echo
+            } >> "$body"
           done <<< "${{ steps.pages.outputs.urls }}"
 
-          exit "$failed"
+          if [ "$failed" -eq 0 ]; then
+            summary="✅ All changed pages conform to the smolweb HTML subset."
+          else
+            summary="❌ One or more changed pages failed validation. See details below."
+          fi
+
+          # Compose the final report: hidden marker (so the comment step can
+          # find and update the same comment), heading, summary, then details.
+          report="$(mktemp)"
+          {
+            echo "<!-- smolweb-validation -->"
+            echo "## 🧪 smolweb validation"
+            echo
+            echo "$summary"
+            echo
+            cat "$body"
+          } >> "$report"
+
+          echo "report=$report" >> "$GITHUB_OUTPUT"
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+
+      # Post (or update) a single sticky comment on the PR with the results.
+      # `--edit-last --create-if-none` keeps one comment that we edit on each
+      # push instead of adding a new comment per run. Runs whenever the
+      # validate step produced a report (i.e. it wasn't skipped and the build
+      # didn't fail before it), regardless of pass/fail.
+      - name: Comment validation results on PR
+        if: always() && steps.validate.outputs.report != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body-file "${{ steps.validate.outputs.report }}" \
+            --edit-last \
+            --create-if-none
+
+      # Fail the job (blocking the merge) only after the comment is posted.
+      - name: Enforce validation result
+        if: steps.pages.outputs.urls != '' && steps.validate.outputs.failed != '0'
+        run: exit 1
