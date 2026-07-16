@@ -23,41 +23,14 @@ jobs:
           # Required so scripts/git-last-modified can see full history.
           fetch-depth: 0
 
-      - name: Install soupault
-        run: |
-          set -eux
-          SOUPAULT_VERSION="5.3.0"
-          curl -fsSL -o soupault.tar.gz \
-            "https://github.com/PataphysicalSociety/soupault/releases/download/${SOUPAULT_VERSION}/soupault-${SOUPAULT_VERSION}-linux-x86_64.tar.gz"
-          tar xzf soupault.tar.gz
-          sudo mv "soupault-${SOUPAULT_VERSION}-linux-x86_64/soupault" /usr/local/bin/
-          soupault --version
+      - name: Set up soupault
+        uses: ./.github/actions/setup-soupault
 
-      - name: Install pandoc
-        run: |
-          set -eux
-          PANDOC_VERSION="3.10"
-          curl -fsSL -o pandoc.tar.gz \
-            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
-          tar xzf pandoc.tar.gz
-          sudo mv "pandoc-${PANDOC_VERSION}/bin/pandoc" /usr/local/bin/
-          pandoc --version
+      - name: Set up pandoc
+        uses: ./.github/actions/setup-pandoc
 
-      # ImageMagick 7 renders the per-post share/OG images. The post-build hook
-      # (hooks/post-build.lua) shells out to `magick` via scripts/share-image.sh.
-      # Ubuntu's apt package is IM6 (`convert` only), so install the official
-      # IM7 portable binary to get the `magick` command.
-      - name: Install ImageMagick
-        run: |
-          set -eux
-          # The portable binary is an AppImage; libfuse2 lets it run directly.
-          sudo apt-get update
-          sudo apt-get install -y libfuse2
-          curl -fsSL -o magick \
-            "https://download.imagemagick.org/archive/binaries/magick"
-          chmod +x magick
-          sudo mv magick /usr/local/bin/
-          magick -version
+      - name: Set up ImageMagick
+        uses: ./.github/actions/setup-imagemagick
 
       # Build the site. The post-build hook generates share images into
       # build/og/ as the final step, so no separate command is needed.

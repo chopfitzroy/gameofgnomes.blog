@@ -1,0 +1,36 @@
+#!/bin/sh
+# Reads a newline-separated list of changed repository paths on stdin and
+# prints, one per line, the clean URL path (rooted at "/") of every changed
+# page that soupault builds into an HTML file.
+#
+# Mapping (mirrors soupault.toml: site_dir=site, clean_urls=true):
+#   site/index.adoc        -> /
+#   site/session-prep.adoc -> /session-prep/
+#   site/foo/bar.html      -> /foo/bar/
+#
+# Only page files (extensions from `page_file_extensions`) under site/ are
+# emitted; assets, templates, plugins, config, etc. are ignored.
+set -eu
+
+while IFS= read -r path; do
+  # Only files inside the site directory are pages.
+  case "$path" in
+    site/*) rel=${path#site/} ;;
+    *) continue ;;
+  esac
+
+  # Only known page extensions produce HTML output.
+  case "$rel" in
+    *.adoc) stem=${rel%.adoc} ;;
+    *.html) stem=${rel%.html} ;;
+    *.htm)  stem=${rel%.htm} ;;
+    *) continue ;;
+  esac
+
+  # index pages collapse onto their containing directory.
+  case "$stem" in
+    index)    echo "/" ;;
+    */index)  echo "/${stem%index}" ;;
+    *)        echo "/$stem/" ;;
+  esac
+done | sort -u

@@ -1,0 +1,118 @@
+name: Validate changed pages
+
+# Runs the smolweb-validator against every page changed in a pull request.
+# We use a fork (https://codeberg.org/chopfitzroy/smolweb-validator) that
+# accepts file:// URLs, so we build the site, map the changed source files to
+# their built HTML files, and validate each rendered page straight from disk
+# without serving anything over HTTP.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so we can diff the PR against its base branch and so
+          # scripts/git-last-modified can read commit dates during the build.
+          fetch-depth: 0
+
+      # Determine which source pages changed in this PR and resolve them to the
+      # clean URLs soupault will serve. If none changed, later steps no-op.
+      - name: Resolve changed page URLs
+        id: pages
+        run: |
+          set -euo pipefail
+          base="origin/${{ github.event.pull_request.base.ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.event.pull_request.base.ref }}"
+          urls=$(git diff --name-only --diff-filter=d "$base"...HEAD \
+            | scripts/changed-page-urls || true)
+          echo "Changed page URLs:"
+          echo "${urls:-<none>}"
+          {
+            echo "urls<<EOF"
+            echo "$urls"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up soupault
+        if: steps.pages.outputs.urls != ''
+        uses: ./.github/actions/setup-soupault
+
+      - name: Set up pandoc
+        if: steps.pages.outputs.urls != ''
+        uses: ./.github/actions/setup-pandoc
+
+      - name: Set up ImageMagick
+        if: steps.pages.outputs.urls != ''
+        uses: ./.github/actions/setup-imagemagick
+
+      - name: Set up JDK
+        if: steps.pages.outputs.urls != ''
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Fork of the upstream validator that accepts file:// URLs, so we can
+      # validate the built HTML directly from disk without a web server.
+      - name: Build the smolweb-validator
+        if: steps.pages.outputs.urls != ''
+        run: |
+          set -eux
+          git clone --depth 1 \
+            https://codeberg.org/chopfitzroy/smolweb-validator.git /tmp/smolweb-validator
+          cd /tmp/smolweb-validator
+          ./build.sh
+
+      - name: Build the site
+        if: steps.pages.outputs.urls != ''
+        run: soupault
+
+      - name: Validate changed pages
+        if: steps.pages.outputs.urls != ''
+        run: |
+          set -euo pipefail
+
+          # Map each clean URL back to the HTML file soupault wrote under
+          # build/ and validate it directly via a file:// URL.
+          #
+          # smolweb-validate exits non-zero only for genuine errors (invalid
+          # HTML or a failing CSS grade); warnings are reported but do not fail
+          # the run. That's the behaviour we want here.
+          failed=0
+          while IFS= read -r url; do
+            [ -n "$url" ] || continue
+            # "/" -> build/index.html, "/foo/" -> build/foo/index.html
+            file="build${url}index.html"
+            if [ ! -f "$file" ]; then
+              echo "❌ ${url} -> ${file} not found in build output"
+              failed=1
+              continue
+            fi
+            abs="$(realpath "$file")"
+            echo "::group::Validating ${url}"
+            # Run from the validator dir so its relative classpath resolves,
+            # while still validating the site file by absolute path.
+            if ( cd /tmp/smolweb-validator \
+                   && ./smolweb-validate "file://${abs}" --verbose ); then
+              echo "✅ ${url} passed"
+            else
+              echo "❌ ${url} failed validation"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done <<< "${{ steps.pages.outputs.urls }}"
+
+          exit "$failed"
