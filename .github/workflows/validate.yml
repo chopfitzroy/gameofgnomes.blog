@@ -90,7 +90,7 @@ jobs:
             status=0
             output="$(
               cd /tmp/smolweb-validator \
-                && ./smolweb-validate "file://${abs}" --verbose
+                && ./smolweb-validate "file://${abs}" --strict --verbose
             )" || status=$?
             echo "$output"
             echo "::endgroup::"
