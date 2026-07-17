@@ -1,10 +1,10 @@
-name: Validate changed pages
+name: Validate pages
 
-# Runs the smolweb-validator against every page changed in a pull request.
-# We use a fork (https://codeberg.org/chopfitzroy/smolweb-validator) that
-# accepts file:// URLs, so we build the site, map the changed source files to
-# their built HTML files, and validate each rendered page straight from disk
-# without serving anything over HTTP.
+# Builds the site and runs the smolweb-validator against every generated HTML
+# file. We use a fork (https://codeberg.org/chopfitzroy/smolweb-validator) that
+# accepts file:// URLs, so we validate the built HTML straight from disk without
+# serving anything over HTTP. Results are summarised in a sticky PR comment and
+# a failing file blocks the merge.
 
 on:
   pull_request:
@@ -24,42 +24,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Full history so we can diff the PR against its base branch and so
-          # scripts/git-last-modified can read commit dates during the build.
+          # Full history so scripts/git-last-modified can read commit dates
+          # during the build.
           fetch-depth: 0
 
-      # Determine which source pages changed in this PR and resolve them to the
-      # clean URLs soupault will serve. If none changed, later steps no-op.
-      - name: Resolve changed page URLs
-        id: pages
-        run: |
-          set -euo pipefail
-          base="origin/${{ github.event.pull_request.base.ref }}"
-          git fetch --no-tags --depth=1 origin "${{ github.event.pull_request.base.ref }}"
-          urls=$(git diff --name-only --diff-filter=d "$base"...HEAD \
-            | scripts/changed-page-urls || true)
-          echo "Changed page URLs:"
-          echo "${urls:-<none>}"
-          {
-            echo "urls<<EOF"
-            echo "$urls"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
       - name: Set up soupault
-        if: steps.pages.outputs.urls != ''
         uses: ./.github/actions/setup-soupault
 
       - name: Set up pandoc
-        if: steps.pages.outputs.urls != ''
         uses: ./.github/actions/setup-pandoc
 
       - name: Set up ImageMagick
-        if: steps.pages.outputs.urls != ''
         uses: ./.github/actions/setup-imagemagick
 
       - name: Set up JDK
-        if: steps.pages.outputs.urls != ''
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -68,7 +46,6 @@ jobs:
       # Fork of the upstream validator that accepts file:// URLs, so we can
       # validate the built HTML directly from disk without a web server.
       - name: Build the smolweb-validator
-        if: steps.pages.outputs.urls != ''
         run: |
           set -eux
           git clone --depth 1 \
@@ -77,47 +54,36 @@ jobs:
           ./build.sh
 
       - name: Build the site
-        if: steps.pages.outputs.urls != ''
         run: soupault
 
-      - name: Validate changed pages
+      - name: Validate built pages
         id: validate
-        if: steps.pages.outputs.urls != ''
         run: |
           set -euo pipefail
 
-          # Map each clean URL back to the HTML file soupault wrote under
-          # build/ and validate it directly via a file:// URL.
-          #
-          # smolweb-validate exits non-zero only for genuine errors (invalid
-          # HTML or a failing CSS grade); warnings are reported but do not fail
-          # the run. That's the behaviour we want here.
-          #
-          # We stream each result to the Actions log AND accumulate a markdown
-          # report that a later step posts as a PR comment. We deliberately do
-          # NOT exit non-zero here: the comment must be posted first (see the
-          # "Enforce validation result" step), so we only record the outcome.
-          # Per-page details accumulate in $body; the header/summary are
-          # prepended afterwards once we know the overall outcome.
+          # Validate every HTML file soupault wrote under build/ via a file://
+          # URL. smolweb-validate exits non-zero only for genuine errors
+          # (invalid HTML or a failing CSS grade); warnings are reported but do
+          # not fail the run. We stream each result to the Actions log AND
+          # accumulate a markdown report that a later step posts as a PR
+          # comment. We deliberately do NOT exit non-zero here: the comment must
+          # be posted first (see the "Enforce validation result" step).
           body="$(mktemp)"
+          scanned=0
+          errored=0
 
-          failed=0
-          while IFS= read -r url; do
-            [ -n "$url" ] || continue
-            # "/" -> build/index.html, "/foo/" -> build/foo/index.html
-            file="build${url}index.html"
-            if [ ! -f "$file" ]; then
-              echo "❌ ${url} -> ${file} not found in build output"
-              failed=1
-              {
-                echo "### ❌ \`${url}\`"
-                echo
-                echo "Expected build output \`${file}\` was not found."
-                echo
-              } >> "$body"
-              continue
-            fi
+          # -print0/read -d '' keeps paths with spaces intact; sorted for a
+          # stable comment ordering.
+          while IFS= read -r -d '' file; do
+            scanned=$((scanned + 1))
+            # build/index.html -> / ; build/foo/index.html -> /foo/
+            rel="${file#build}"
+            case "$rel" in
+              */index.html) url="${rel%index.html}" ;;
+              *)            url="$rel" ;;
+            esac
             abs="$(realpath "$file")"
+
             echo "::group::Validating ${url}"
             # Run from the validator dir so its relative classpath resolves,
             # while still validating the site file by absolute path.
@@ -135,7 +101,7 @@ jobs:
             else
               echo "❌ ${url} failed validation"
               icon="❌"
-              failed=1
+              errored=$((errored + 1))
             fi
 
             {
@@ -148,16 +114,18 @@ jobs:
               echo "</details>"
               echo
             } >> "$body"
-          done <<< "${{ steps.pages.outputs.urls }}"
+          done < <(find build -type f -name '*.html' -print0 | sort -z)
 
-          if [ "$failed" -eq 0 ]; then
-            summary="✅ All changed pages conform to the smolweb HTML subset."
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ "$errored" -eq 0 ]; then
+            summary="✅ ${scanned}/${scanned} files scanned, 0 with errors."
           else
-            summary="❌ One or more changed pages failed validation. See details below."
+            summary="❌ ${scanned}/${scanned} files scanned, ${errored} with errors."
           fi
 
           # Compose the final report: hidden marker (so the comment step can
-          # find and update the same comment), heading, summary, then details.
+          # find and update the same comment), heading, summary, run link, then
+          # per-file details.
           report="$(mktemp)"
           {
             echo "<!-- smolweb-validation -->"
@@ -165,17 +133,19 @@ jobs:
             echo
             echo "$summary"
             echo
+            echo "[View full validation output](${run_url})"
+            echo
             cat "$body"
           } >> "$report"
 
           echo "report=$report" >> "$GITHUB_OUTPUT"
-          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+          echo "errored=$errored" >> "$GITHUB_OUTPUT"
 
       # Post (or update) a single sticky comment on the PR with the results.
       # `--edit-last --create-if-none` keeps one comment that we edit on each
-      # push instead of adding a new comment per run. Runs whenever the
-      # validate step produced a report (i.e. it wasn't skipped and the build
-      # didn't fail before it), regardless of pass/fail.
+      # push instead of adding a new comment per run. Runs whenever the validate
+      # step produced a report (i.e. the build didn't fail before it),
+      # regardless of pass/fail.
       - name: Comment validation results on PR
         if: always() && steps.validate.outputs.report != ''
         env:
@@ -189,5 +159,5 @@ jobs:
 
       # Fail the job (blocking the merge) only after the comment is posted.
       - name: Enforce validation result
-        if: steps.pages.outputs.urls != '' && steps.validate.outputs.failed != '0'
+        if: steps.validate.outputs.errored != '0'
         run: exit 1
