@@ -46,8 +46,8 @@ jobs:
       - name: Set up pandoc
         uses: ./.github/actions/setup-pandoc
 
-      - name: Set up ImageMagick
-        uses: ./.github/actions/setup-imagemagick
+      # No ImageMagick setup: this build runs with OG image rendering off
+      # (OG_IMAGES unset), since we only need the page list for the find below.
 
       - name: Set up JDK
         uses: actions/setup-java@v4

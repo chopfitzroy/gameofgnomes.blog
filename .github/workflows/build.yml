@@ -32,10 +32,13 @@ jobs:
       - name: Set up ImageMagick
         uses: ./.github/actions/setup-imagemagick
 
-      # Build the site. The post-build hook generates share images into
-      # build/og/ as the final step, so no separate command is needed.
+      # Build the site. OG_IMAGES=1 turns on ImageMagick share-card rendering
+      # (off by default, so local builds and the nightly validation build skip
+      # it); the og-image widget generates build/og/*.png during the build.
       - name: Build
         run: soupault
+        env:
+          OG_IMAGES: "1"
 
       - uses: actions/upload-pages-artifact@v3
         with:
