@@ -12,9 +12,9 @@ The site is built with [soupault](https://soupault.net/) and is deliberately sma
 
 All [open graph](https://ogp.me/) images are generate with [ImageMagick](https://imagemagick.org/).
 
-This site is part of the [smolweb](https://smolweb.org/) and deliberately shys away from fancy tooling.
-
 All content is written in [AsciiDoc](https://asciidoc.org/) and compiled with [Pandoc](https://pandoc.org/).
+
+This site is part of the [smolweb](https://smolweb.org/) and deliberately shys away from fancy tooling.
 
 Analytics are recorded with [GoatCounter](https://www.goatcounter.com/) and will eventually be made publicly available.
 
