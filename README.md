@@ -20,6 +20,6 @@ Analytics are recorded with [GoatCounter](https://www.goatcounter.com/) and will
 
 ### Does it use AI
 
-You may have noticed the `AGENTS.md` yes I do use LLM's to assist with some of the Lua code as it is a language I am still getting familiar with, I do not however use AI for any creative writing as I wholeheartedly believe it erases ones voice.
+You may have noticed the `AGENTS.md` yes I do use LLM's to assist with some of the Lua code as it is a language I am still getting familiar with. I do not however use LLM's for any creative writing as I wholeheartedly believe it erases ones voice.
 
 If you want to know more about what I think of LLM's or the tech industry in general I recommend my [personal site](https://chopfitzroy.online/).
