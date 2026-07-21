@@ -1,0 +1,174 @@
+name: Validate live site
+
+# Nightly check of the deployed site against the smolweb-validator. A
+# regression here is at most a performance/accessibility concern, so this runs
+# on a schedule (not on deploy) and reports via a tracking issue rather than
+# blocking anything.
+#
+# We build the site only to enumerate which pages exist, then validate the
+# corresponding *live* https:// URLs. Hitting the real site (rather than
+# serving locally) exercises whatever GitHub Pages' edge does to our responses,
+# so if that ever changed in a way the validator dislikes, we'd find out.
+#
+# Only the validator's --strict flag is used here, not its file:// support,
+# since we validate live URLs.
+
+on:
+  schedule:
+    # 02:30 UTC nightly.
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: validate-live
+  cancel-in-progress: true
+
+env:
+  SITE_URL: https://gameofgnomes.blog
+
+jobs:
+  validate-live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so scripts/git-last-modified can read commit dates
+          # during the build.
+          fetch-depth: 0
+
+      - name: Set up soupault
+        uses: ./.github/actions/setup-soupault
+
+      - name: Set up pandoc
+        uses: ./.github/actions/setup-pandoc
+
+      # No ImageMagick setup: this build runs with OG image rendering off
+      # (OG_IMAGES unset), since we only need the page list for the find below.
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build the smolweb-validator
+        run: |
+          set -eux
+          git clone --depth 1 \
+            https://codeberg.org/chopfitzroy/smolweb-validator.git /tmp/smolweb-validator
+          cd /tmp/smolweb-validator
+          ./build.sh
+
+      # Build only to discover which pages exist; the generated HTML itself is
+      # not validated (we hit the live URLs below).
+      - name: Build the site
+        run: soupault
+
+      - name: Validate live pages
+        id: validate
+        run: |
+          set -euo pipefail
+
+          body="$(mktemp)"
+          scanned=0
+          errored=0
+
+          # build/index.html -> / ; build/foo/index.html -> /foo/
+          while IFS= read -r -d '' file; do
+            rel="${file#build}"
+            case "$rel" in
+              */index.html) path="${rel%index.html}" ;;
+              *)            path="$rel" ;;
+            esac
+            full="${SITE_URL}${path}"
+            scanned=$((scanned + 1))
+
+            echo "::group::Validating ${full}"
+            status=0
+            output="$(
+              cd /tmp/smolweb-validator \
+                && ./smolweb-validate "$full" --strict --verbose
+            )" || status=$?
+            echo "$output"
+            echo "::endgroup::"
+
+            if [ "$status" -eq 0 ]; then
+              echo "✅ ${path} passed"
+              icon="✅"
+            else
+              echo "❌ ${path} failed validation"
+              icon="❌"
+              errored=$((errored + 1))
+            fi
+
+            {
+              echo "<details><summary>${icon} <code>${path}</code></summary>"
+              echo
+              echo '```'
+              echo "$output"
+              echo '```'
+              echo
+              echo "</details>"
+              echo
+            } >> "$body"
+          done < <(find build -type f -name '*.html' -print0 | sort -z)
+
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ "$errored" -eq 0 ]; then
+            summary="✅ ${scanned}/${scanned} live pages scanned, 0 with errors."
+          else
+            summary="❌ ${scanned}/${scanned} live pages scanned, ${errored} with errors."
+          fi
+
+          report="$(mktemp)"
+          {
+            echo "## 🧪 smolweb live validation"
+            echo
+            echo "$summary"
+            echo
+            echo "[View full validation output](${run_url})"
+            echo
+            cat "$body"
+          } >> "$report"
+
+          echo "report=$report" >> "$GITHUB_OUTPUT"
+          echo "errored=$errored" >> "$GITHUB_OUTPUT"
+
+      # Open a tracking issue on failure, or comment on the existing open one so
+      # we never pile up duplicates. Matched by title.
+      - name: Open or update issue on failure
+        if: steps.validate.outputs.errored != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "🧪 smolweb live validation failing"
+        run: |
+          set -euo pipefail
+          existing="$(gh issue list --state open \
+            --search "in:title ${TITLE}" \
+            --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "${{ steps.validate.outputs.report }}"
+          else
+            gh issue create --title "$TITLE" \
+              --body-file "${{ steps.validate.outputs.report }}"
+          fi
+
+      # Close the tracking issue once the live site validates cleanly again.
+      - name: Close issue on success
+        if: steps.validate.outputs.errored == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "🧪 smolweb live validation failing"
+        run: |
+          set -euo pipefail
+          existing="$(gh issue list --state open \
+            --search "in:title ${TITLE}" \
+            --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" \
+              --comment "✅ Live validation passing again, closing."
+          fi

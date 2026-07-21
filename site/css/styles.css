@@ -1,20 +1,49 @@
 @font-face {
   font-family: 'Mona Sans';
-  src: url('../assets/fonts/MonaSansVF[wdth,wght,opsz,ital].woff2') format('woff2-variations'),
-       url('../assets/fonts/MonaSansVF[wdth,wght,opsz,ital].woff') format('woff-variations');
-  font-weight: 200 900;
-  font-stretch: 75% 125%;
+  src: url('../assets/fonts/MonaSans-Regular.woff2') format('woff2'),
+    url('../assets/fonts/MonaSans-Regular.woff') format('woff');
+  font-weight: 400;
   font-style: normal;
-  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('../assets/fonts/MonaSans-Italic.woff2') format('woff2'),
+    url('../assets/fonts/MonaSans-Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('../assets/fonts/MonaSans-Bold.woff2') format('woff2'),
+    url('../assets/fonts/MonaSans-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('../assets/fonts/MonaSans-BoldItalic.woff2') format('woff2'),
+    url('../assets/fonts/MonaSans-BoldItalic.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
 }
 
 @font-face {
   font-family: 'Mona Sans Mono';
-  src: url('../assets/fonts/MonaSansMonoVF[wght].woff2') format('woff2-variations'),
-       url('../assets/fonts/MonaSansMonoVF[wght].woff') format('woff-variations');
-  font-weight: 200 900;
+  src: url('../assets/fonts/MonaSansMono-Regular.woff2') format('woff2'),
+    url('../assets/fonts/MonaSansMono-Regular.woff') format('woff');
+  font-weight: 400;
   font-style: normal;
-  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans Mono';
+  src: url('../assets/fonts/MonaSansMono-Bold.woff2') format('woff2'),
+    url('../assets/fonts/MonaSansMono-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
 }
 
 body {
@@ -24,6 +53,21 @@ body {
   max-width: 42rem;
 }
 
-code, pre, kbd, samp {
+header p a {
+  color: black;
+  display: block;
+  border-bottom: 2px solid black;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Mona Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+code,
+pre,
+kbd,
+samp {
   font-family: 'Mona Sans Mono', ui-monospace, monospace;
 }

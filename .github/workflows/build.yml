@@ -23,28 +23,22 @@ jobs:
           # Required so scripts/git-last-modified can see full history.
           fetch-depth: 0
 
-      - name: Install soupault
-        run: |
-          set -eux
-          SOUPAULT_VERSION="5.3.0"
-          curl -fsSL -o soupault.tar.gz \
-            "https://github.com/PataphysicalSociety/soupault/releases/download/${SOUPAULT_VERSION}/soupault-${SOUPAULT_VERSION}-linux-x86_64.tar.gz"
-          tar xzf soupault.tar.gz
-          sudo mv "soupault-${SOUPAULT_VERSION}-linux-x86_64/soupault" /usr/local/bin/
-          soupault --version
+      - name: Set up soupault
+        uses: ./.github/actions/setup-soupault
 
-      - name: Install pandoc
-        run: |
-          set -eux
-          PANDOC_VERSION="3.10"
-          curl -fsSL -o pandoc.tar.gz \
-            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
-          tar xzf pandoc.tar.gz
-          sudo mv "pandoc-${PANDOC_VERSION}/bin/pandoc" /usr/local/bin/
-          pandoc --version
+      - name: Set up pandoc
+        uses: ./.github/actions/setup-pandoc
 
+      - name: Set up ImageMagick
+        uses: ./.github/actions/setup-imagemagick
+
+      # Build the site. OG_IMAGES=1 turns on ImageMagick share-card rendering
+      # (off by default, so local builds and the nightly validation build skip
+      # it); the og-image widget generates build/og/*.png during the build.
       - name: Build
         run: soupault
+        env:
+          OG_IMAGES: "1"
 
       - uses: actions/upload-pages-artifact@v3
         with:

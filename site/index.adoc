@@ -1,4 +1,4 @@
-== Game of Gnomes
+== All Posts
 
 ++++
 <div id="index" class="index-container"></div>
