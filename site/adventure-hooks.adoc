@@ -1,0 +1,82 @@
+== Adventure Hooks
+
+I'd like to talk about a technique I use when preparing adventure hooks. When I say adventure hook I am talking about a piece of narrative that player characters may or may not choose to explore.
+
+=== The three P's
+
+The three P's is a mnemomic I've come up with to ensure that any adventure hook has the bare minimum required to make it workable, it stands for people, places, and pressure.
+
+=== Understanding people
+
+TODO...
+
+=== Understanding places
+
+TODO...
+
+=== Understanding pressure
+
+Originally I wanted to call the third P _problems_ not _pressure_ but then I realised problems on their own aren't particularily compelling to player characters.
+
+For example a farmer who would like his stolen cattle found and returned eventually is far less compelling than a farmer whose house is about to be foreclosed on if he can't make enough money and the midwinter festival selling the cattle he's been rearing since last spring.
+
+The problem is essentially the same in both situations, the farmer's cattle have been stolen but in the second scenario we also have urgency a reason for the characters to help the farmer today as opposed to two weeks from now.
+
+Pressures become even more compelling when we have multiple of them compteting for the characters attention, now the player characters have real choices (and consequences) in front of them and they have the _agency_ to decide what is most important to them.
+
+It can be hard to add pressure without it always being a deadline, if your struggling for ideas on how to create pressure in other ways here are some things I have used in the past:
+
+* The longer the characters stay in one locarion the closer their rivals get to closing in on them
+* The longer the characters wait to action a task the higher the likelihood of another entity doing the same action
+* The longer the characters spend gathering information the stronger the opposing force gets
+
+At the end of the day all of these techniques are another way to create urgency but they are structure more as _trade-offs_ as opposed to _do X by Y_ which can mix things up a bit.
+
+=== Campaign specific tables
+
+Whenever we're rolling encounters during a session we need things to move as quickly as possible, this often means we don't want to roll something that doesn't make narrative sense in the current context. With this in mind I tend to create (small) https://www.bastionland.com/2017/11/electric-modernity-and-spark-tables.html[spark tables] for each adventure location.
+
+Let's imagine an urban location where the player character's are currently holled up during an untimely siege. I might have a table that looks something like this this:
+
+[cols="1,2,2,4"]
+|===
+|d4
+|Person
+|Place
+|Pressure
+
+|1
+|Lady Carmichael
+|Silverthorn Keep
+|Looking to to buy safe passage out of the city for Gnoll maid before guards do their next inspection
+
+|2
+|Bert Tushok
+|The Ram's head
+|Would like to purchase personal protection for the next three hours
+
+|3
+|Tink Lightfinger
+|Hedgerow Antiquities
+|Needs help getting an incoming shipment passed the surrounding Gnoll warband tonight
+
+|4
+|Narkan Rockeye
+|City Barracks
+|Wants a captured solider rescued from a Gnoll camp before he is executed tomorrow at dawn
+|===  
+
+Now if the narrative requires me to I can roll a d4 three times and generate a compelling story hook on the fly. You can also pick three options at random and avoid the roll entirely, often I will author the table in such a way to each row can easily be thrown into a game without much thought on my part.
+
+You also don't have to use all three columns let's say the character's elect to go to the City Barracks of their own volution and you roll an encounter check and just so happen to roll a random encounter you can now just roll on the _person_ and _pressure_ columns respectively as you already know the _place_.
+
+Let's say you roll a one and a three, now Lady Carmichael is also at the City Barracks trying to persuade a young guard to help her get an iconming shipment of _undisclosed goods_ past the surrounding Gnoll warband.
+
+I actually create multiple campaign specific tables for any given campaign, I'll usually have one for adventure hooks, a few for different kinds of encounters based on the kind of environment the characters are in etc...
+
+=== Faction tables
+
+If I am ever running a longer campaing with more intricate story arcs I will often have a factions table with anywhere between eight to twenty factions, I will use this table for all sorts of things like rolling up the origin of a particular magic item all the way through to which faction is the most well represented at the festival of the summer solstice.
+
+Faction tables can replace the _person_ column on the above spark table meaning now you only need to prep _place_ and _pressure_ columns for each adventure location, this is a great way to save on time during your prep and really helps to make factions feel alive within the world.
+
