@@ -53,6 +53,14 @@ body {
   max-width: 42rem;
 }
 
+a {
+  color: #b30000;
+}
+
+a:visited {
+  color: #9a0000;
+}
+
 header p a {
   color: black;
   display: block;
@@ -63,6 +71,10 @@ header p a {
   font-size: 2rem;
   font-weight: bold;
   text-decoration: none;
+}
+
+header p a:visited {
+  color: black;
 }
 
 code,
