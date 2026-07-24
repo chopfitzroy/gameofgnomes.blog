@@ -12,7 +12,13 @@ TODO...
 
 === Understanding places
 
-TODO...
+Places should be nothing more than a few evocative footnotes to help set the scene, you don't want something so fixed in your mind that it doesn't allow for flexibility but you also don't want something so vague as to not be able to convey the atmosphere coherently.
+
+This is a fine balance to achieve, I usually use a name and then a view evocative adjectives next to this, for example:
+
+> Castle Felmore (Oppulent, Sterile, Unnerving)
+
+This is enough for me to (at a glance) know what I am wanting to present in the moment without being so descriptive that I get bogged down in the details and cause a disruption to the cadence of the game.
 
 === Understanding pressure
 
