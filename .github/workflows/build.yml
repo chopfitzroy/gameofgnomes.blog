@@ -29,8 +29,16 @@ jobs:
       - name: Set up pandoc
         uses: ./.github/actions/setup-pandoc
 
-      - name: Set up ImageMagick
-        uses: ./.github/actions/setup-imagemagick
+      # Pin ImageMagick 6 explicitly while allowing the GitHub runner to track
+      # ubuntu-latest. When this package disappears, update and test the share
+      # image renderer against IM7 before changing the pinned version.
+      - name: Install ImageMagick 6
+        run: |
+          set -eux
+          IMAGEMAGICK_VERSION="8:6.9.12.98+dfsg1-5.2build2"
+          sudo apt-get update
+          sudo apt-get install -y "imagemagick=${IMAGEMAGICK_VERSION}"
+          convert -version
 
       # Build the site. OG_IMAGES=1 turns on ImageMagick share-card rendering
       # (off by default, so local builds and the nightly validation build skip
