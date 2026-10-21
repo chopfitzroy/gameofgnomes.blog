@@ -1,0 +1,6 @@
+== Gameplay loop
+
+- Present (Telegraph)
+- Negotiate
+- Adjudicate
+- Respond
