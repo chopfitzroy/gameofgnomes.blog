@@ -22,7 +22,6 @@
   adoc = "pandoc -f asciidoc -t html5"
 
 [custom_options]
-  # Used by the atom plugin to build absolute feed URLs.
   site_url = "https://gameofgnomes.blog"
 
 # Use the first <h1> of each page as the <title>
@@ -56,9 +55,6 @@
   # Parse ISO dates like 2026-04-26 (%F == %Y-%m-%d).
   date_formats = ["%F"]
 
-  # Required for the atom plugin.
-  dump_json = "index.json"
-
 [index.fields.title]
   selector = ["h1"]
   required = true
@@ -72,10 +68,6 @@
 # inner text, which the pre-parse hook set to "Apr 26, 2026".
 [index.fields.date_pretty]
   selector = ["time.note-date"]
-
-# Lightweight excerpt for the atom feed. First <p> of each note.
-[index.fields.excerpt]
-  selector = ["p"]
 
 # Render the index into #index on site/index.md.
 [index.views.index]
@@ -106,24 +98,3 @@
 [widgets.goatcounter]
   widget = "goatcounter"
   endpoint = "https://otis.goatcounter.com/count"
-
-# Append a "View source" link to the bottom of every note, pointing at the
-# post's source .adoc on GitHub (plugins/source-link.lua). Skips the home
-# page since it isn't a note.
-[widgets.source-link]
-  widget = "source-link"
-  path_regex = '\.adoc$'
-  exclude_page = "index.adoc"
-
-# Atom feed (plugins/atom.lua, vendored from soupault-website, MIT).
-[widgets.atom]
-  widget = "atom"
-  page = "index.adoc"        # Attach to the home page so it runs once.
-
-  feed_file = "atom.xml"
-  feed_author = "Otis Sutton"
-  feed_author_email = "chopfitzroy@gmail.com"
-  feed_title = "Game of Gnomes"
-  feed_subtitle = "A blog about game mastering"
-  feed_logo = ""
-  delete_elements = ["a"]    # Strip links from excerpts.

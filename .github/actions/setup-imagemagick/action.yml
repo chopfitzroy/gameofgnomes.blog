@@ -1,0 +1,23 @@
+name: Set up ImageMagick
+description: >-
+  Install ImageMagick 7, which renders the per-post share/OG images. The
+  post-build hook (hooks/post-build.lua) shells out to `magick` via
+  scripts/share-image.sh. Ubuntu's apt package is IM6 (`convert` only), so we
+  install the official IM7 portable binary to get the `magick` command. Shared
+  between the build and validate workflows.
+
+runs:
+  using: composite
+  steps:
+    - name: Install ImageMagick
+      shell: bash
+      run: |
+        set -eux
+        # The portable binary is an AppImage; libfuse2 lets it run directly.
+        sudo apt-get update
+        sudo apt-get install -y libfuse2
+        curl -fsSL -o magick \
+          "https://download.imagemagick.org/archive/binaries/magick"
+        chmod +x magick
+        sudo mv magick /usr/local/bin/
+        magick -version

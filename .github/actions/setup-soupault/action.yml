@@ -1,0 +1,24 @@
+name: Set up soupault
+description: >-
+  Install the soupault static site generator. Shared between the build and
+  validate workflows so the version lives in one place.
+
+inputs:
+  version:
+    description: soupault release to install
+    required: false
+    default: "5.3.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Install soupault
+      shell: bash
+      run: |
+        set -eux
+        SOUPAULT_VERSION="${{ inputs.version }}"
+        curl -fsSL -o soupault.tar.gz \
+          "https://github.com/PataphysicalSociety/soupault/releases/download/${SOUPAULT_VERSION}/soupault-${SOUPAULT_VERSION}-linux-x86_64.tar.gz"
+        tar xzf soupault.tar.gz
+        sudo mv "soupault-${SOUPAULT_VERSION}-linux-x86_64/soupault" /usr/local/bin/
+        soupault --version

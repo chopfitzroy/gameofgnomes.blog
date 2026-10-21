@@ -72,10 +72,17 @@ else
   end
 end
 
--- Render the share card into build/og/<slug>.png. Sys.mkdir is idempotent.
-local og_dir = Sys.join_path(build_dir, "og")
-Sys.mkdir(og_dir)
-render_card(title, Sys.join_path(og_dir, slug .. ".png"))
+-- Render the share card into build/og/<slug>.png. This shells out to
+-- ImageMagick and is by far the slowest part of a build, yet the generated
+-- PNGs are not needed for local previews or for enumerating pages. It is
+-- therefore opt-in: set OG_IMAGES=1 (see the build workflow) to render cards.
+-- The <meta> tags below are always injected so page output is identical
+-- whether or not the images exist. Sys.mkdir is idempotent.
+if Sys.getenv("OG_IMAGES", nil) then
+  local og_dir = Sys.join_path(build_dir, "og")
+  Sys.mkdir(og_dir)
+  render_card(title, Sys.join_path(og_dir, slug .. ".png"))
+end
 
 -- Canonical page URL. Clean URLs mean the home page is the site root and every
 -- other page is "<site_url>/<slug>/".

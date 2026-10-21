@@ -1,9 +1,15 @@
--- GoatCounter tracking pixel.
+-- GoatCounter tracking (CSS background-image).
 --
--- Injects an <img> counter pixel into every page, using the page's path
+-- Injects a <style> block into every page that fetches the GoatCounter
+-- counter endpoint via `background-image` on <body>, using the page's path
 -- (derived from its source .adoc file name) as the `p` query parameter, e.g.
---   site/session-prep.adoc  ->  <img src=".../count?p=/session-prep">
---   site/index.adoc         ->  <img src=".../count?p=/index">
+--   site/session-prep.adoc  ->  background-image: url(".../count?p=/session-prep")
+--   site/index.adoc         ->  background-image: url(".../count?p=/index")
+--
+-- We use `background-image` (a smolweb Grade-A CSS property) rather than an
+-- <img> pixel: an empty `alt` trips the validator's accessibility warning,
+-- and `referrerpolicy` is not part of the HTML subset. The /count endpoint
+-- returns a 1x1 transparent GIF, so it stays invisible.
 --
 -- Config (soupault.toml):
 --   endpoint = "https://otis.goatcounter.com/count"  (required)
@@ -32,15 +38,13 @@ if not h1 then
 end
 local title = String.trim(HTML.inner_text(h1))
 
--- Deliberately leave alt empty
--- https://webmasters.stackexchange.com/a/106041
-local pixel = format(
-  '<img src="%s?p=%s&t=%s" alt="" referrerpolicy="no-referrer-when-downgrade">',
+local style = format(
+  '<style>body{background-image:url("%s?p=%s&t=%s")}</style>',
   endpoint, path, title
 )
 
--- Append the pixel to the end of <body> so it is part of the final markup.
-local body = HTML.select_one(page, "body")
-if body then
-  HTML.append_child(body, HTML.parse(pixel))
+-- Append the <style> to the end of <head> so it is part of the final markup.
+local head = HTML.select_one(page, "head")
+if head then
+  HTML.append_child(head, HTML.parse(style))
 end

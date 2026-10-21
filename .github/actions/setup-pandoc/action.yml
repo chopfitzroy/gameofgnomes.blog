@@ -1,0 +1,24 @@
+name: Set up pandoc
+description: >-
+  Install pandoc (AsciiDoc/Markdown conversion). Shared between the build and
+  validate workflows so the version lives in one place.
+
+inputs:
+  version:
+    description: pandoc release to install
+    required: false
+    default: "3.10"
+
+runs:
+  using: composite
+  steps:
+    - name: Install pandoc
+      shell: bash
+      run: |
+        set -eux
+        PANDOC_VERSION="${{ inputs.version }}"
+        curl -fsSL -o pandoc.tar.gz \
+          "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
+        tar xzf pandoc.tar.gz
+        sudo mv "pandoc-${PANDOC_VERSION}/bin/pandoc" /usr/local/bin/
+        pandoc --version
