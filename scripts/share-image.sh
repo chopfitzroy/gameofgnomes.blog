@@ -20,7 +20,13 @@ out="${2:?usage: share-image.sh <title> <output.png>}"
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 font="$repo_root/fonts/MonaSans-Bold.ttf"
 
-magick -size 1200x630 xc:white \
+# This renderer intentionally targets ImageMagick 6. Before upgrading to IM7,
+# review the command for compatibility and compare its generated images.
+convert -size 1200x630 xc:white \
+  \( -background none -fill '#000000' -font "$font" -pointsize 48 \
+     -gravity North label:"Game of Gnomes" \) \
+     -gravity North -geometry +0+64 -composite \
+  -fill '#000000' -draw 'rectangle 64,150 1136,152' \
   \( -background none -fill '#000000' -font "$font" \
      -interline-spacing -10 \
      -size 1080x460 -gravity Center caption:"$title" \) \
