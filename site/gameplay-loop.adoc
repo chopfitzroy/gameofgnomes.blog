@@ -1,0 +1,21 @@
+== Gameplay loop
+
+I've been thinking a lot about the _gameplay loop_ lately, in this case I've been thinking about Shadowdark/5e specifically but in retrospect I think most of this is generally applicable.
+
+One of the things I've noticed in my own game is I can really _feel it_ when a player doesn't feel they have any meaningful choices to make on their turn. Any time a player says something like _"I'm not really sure what to do so I'll just stay put"_ I know I've fucked up.
+
+To be clear the issue here isn't deciding to do nothing the issue is deciding to do nothing when there is no alternative, for example it's very different if the player says _"I want to see how the argument between the merchant and the lord plays out so I will stay where I am and just listen in for now"_.
+
+So how to I combat this in practice? I've come up with a four step process that I use to remind myself to present interesting choices to my players every round.
+
+Disclaimer I typically use side initiative (see https://slyflourish.com/side_initiative.html[simpler initiative options]) at my table and only have players roll initiave checks to avoid being surprised for the first round in the rare situations where enemies get the drop on them, this isn't a requirement of the below steps but it certainly helps as your apply the process to the entire group as opposed to once for each individual.
+
+==== Inform
+
+==== Negotiate
+
+==== Adjudicate
+
+==== Respond
+
+A lot of the concepts here have already been discussed in https://theangrygm.com/declare-determine-describe/[the declare-determine-describe cycle] which I highly recommend. The above is really just the best approach I've found for myself to reliably deliver the kind of experience I want my players to have at the table.
