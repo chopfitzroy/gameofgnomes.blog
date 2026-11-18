@@ -1,0 +1,17 @@
+== System as a chasis
+
+I've been thinking a bit about why we pick the systems we do. You'll often hear things like system X facilitates game style Y and so on and so fourth. I think this is ultimately correct but I take issue whenever I hear someone say system X *is for* game style Y.
+
+So what is a game system really? The way I see it a game system at it's core serves 3 purposes:
+
+=== Oscillation
+
+The level of zoom for different story beats, high narrative (encounters come down to a single roll), war gaming (encounters come down to many smaller rolls), etc...
+
+=== Resolution
+
+How fast things can be resolved, GM only (set DC), player only (roll under), negotiation (I have background X so can I add an extra d6 to my pool), etc...
+
+=== Autonomy
+
+Hard rules that allow the players to act without rulings.
